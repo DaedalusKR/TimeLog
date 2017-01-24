@@ -1,6 +1,7 @@
 from UI import *
 import sys
 import threading
+from timeformat import  *
 
 
 
@@ -8,6 +9,7 @@ def main():
     app = QApplication(sys.argv)
 
     #create ui window
+
     timer_ui = Interface()
     sys.exit(app.exec_())
 
