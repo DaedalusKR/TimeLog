@@ -11,11 +11,11 @@ class Interface(QWidget):
         self.time_elapsed = 0
         self.timer_label_text = str(self.time_elapsed)
         self.timer_label = QLabel(self.timer_label_text, self)
+        self.t = None
 
         self.init_ui()
         self.show()
-        #self.run_timer()
-    
+
     def init_ui(self):
 
         self.resize(400, 200)
@@ -33,12 +33,16 @@ class Interface(QWidget):
         start_button.move(button_x_pos, button_y_pos)
         start_button.pressed.connect(self.run_timer)
         stop_button.move(start_button.pos().x() + button_x_diff, start_button.pos().y() + button_y_diff)
+        stop_button.pressed.connect(self.stop_timer)
         close_button.move(stop_button.pos().x() + button_x_diff, stop_button.pos().y() + button_y_diff)
         self.timer_label.move(50, 50)
 
     def run_timer(self):
-        t = threading.Timer(1.0, self.inc_elapsed_time, [self.time_elapsed])
-        t.start()
+        self.t = threading.Timer(1.0, self.inc_elapsed_time, [self.time_elapsed])
+        self.t.start()
+
+    def stop_timer(self):
+        self.t.cancel()
 
     def inc_elapsed_time(self, time_elapsed):
         self.time_elapsed = time_elapsed
