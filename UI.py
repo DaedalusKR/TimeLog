@@ -54,8 +54,8 @@ class Interface(QWidget):
 
     def add_timer(self):
         new_timer = QInputDialog.getText(self, "New Timer", "What are you timing?")
-        new_timer.resize(300,100)
-        new_timer.show()
+        #new_timer.resize(300,100)
+        #new_timer.show()
 
     def remove_timer(self):
         print('remove')
