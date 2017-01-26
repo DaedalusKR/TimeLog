@@ -1,6 +1,6 @@
 
 from PyQt5.QtWidgets import *
-from PyQt5.QtGui import QFont
+from PyQt5.QtGui import *
 import threading
 from timeformat import *
 
@@ -13,14 +13,15 @@ class Interface(QWidget):
         self.timer_label_text = "00:00:00"
         self.timer_label = QLabel(self.timer_label_text, self)
         self.timer_count_thread = None
+        self.list_options = QListWidget(self)
         # end of init class vars
 
-        #set up Timer UI and push to screen
+        # set up Timer UI and push to screen
         self.init_ui()
         self.show()
 
     def init_ui(self):
-        #set vars for UI elements
+        # set vars for UI elements
         frame_x_len = 400
         frame_y_len = 200
         button_x_pos = 160
@@ -28,24 +29,39 @@ class Interface(QWidget):
         button_x_diff = 70
         button_y_diff = 0
 
-        #create UI elements
+        # create UI elements
         start_button = QPushButton("Start", self)
         stop_button = QPushButton("Stop", self)
         close_button = QPushButton("Close", self)
+        add_button = QPushButton("Add", self)
+        remove_button = QPushButton(str("Delete"),self)
         self.timer_label.setFont(QFont('SansSerif', 40))
 
-        #position UI elements
+        # position UI elements
         start_button.move(button_x_pos, button_y_pos)
         start_button.pressed.connect(self.run_timer)
         stop_button.move(start_button.pos().x() + button_x_diff, start_button.pos().y() + button_y_diff)
         stop_button.pressed.connect(self.stop_timer)
         close_button.move(stop_button.pos().x() + button_x_diff, stop_button.pos().y() + button_y_diff)
+        add_button.move(2, 130)
+        add_button.pressed.connect(self.add_timer)
+        remove_button.move(60, 130)
+        remove_button.pressed.connect(self.remove_timer)
         self.resize(frame_x_len, frame_y_len)
-        self.timer_label.move(50, 50)
+        self.timer_label.move(180, 50)
         self.timer_label.setFixedWidth(frame_x_len - 100)
+        self.list_options.setGeometry(10,10,135,120)
+
+    def add_timer(self):
+        new_timer = QInputDialog.getText(self, "New Timer", "What are you timing?")
+        new_timer.resize(300,100)
+        new_timer.show()
+
+    def remove_timer(self):
+        print('remove')
 
     def run_timer(self):
-        #GUI is running from the main thread so create a second thread to increate the timer every second 
+        # GUI is running from the main thread so create a second thread to increate the timer every second
         self.timer_count_thread = threading.Timer(1.0, self.inc_elapsed_time, [self.time_elapsed])
         self.timer_count_thread.start()
 
@@ -53,8 +69,8 @@ class Interface(QWidget):
         self.timer_count_thread.cancel()
 
     def inc_elapsed_time(self, time_elapsed):
-        #Update the timer every second to inc by 1 and update the UI variable. 
-        #Recurse back into the function until stop_timer() gets called from the UI
+        # Update the timer every second to inc by 1 and update the UI variable.
+        # Recurse back into the function until stop_timer() gets called from the UI
         self.time_elapsed = time_elapsed
         self.time_elapsed += 1
         self.timer_label_text = formatted_time(self.time_elapsed)
