@@ -14,6 +14,8 @@ class Interface(QWidget):
         self.timer_label = QLabel(self.timer_label_text, self)
         self.timer_count_thread = None
         self.list_options = QListWidget(self)
+        self.timers = []
+
         # end of init class vars
 
         # set up Timer UI and push to screen
@@ -54,11 +56,24 @@ class Interface(QWidget):
 
     def add_timer(self):
         new_timer = QInputDialog.getText(self, "New Timer", "What are you timing?")
-        #new_timer.resize(300,100)
-        #new_timer.show()
+        timer_title = new_timer[0]
+        self.list_options.addItem(str(timer_title))
+
 
     def remove_timer(self):
-        print('remove')
+        remove_confirm_box = QMessageBox()
+        remove_confirm_box.setIcon(QMessageBox.Question)
+
+        remove_confirm_box.setWindowTitle("Remove Timer")
+        remove_confirm_box.setText("Are you sure you want to delete this timer? This can\'t be undone")
+        remove_confirm_box.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+        remove_action_selected = remove_confirm_box.exec()
+
+        if remove_action_selected == QMessageBox.Ok:
+            item = self.list_options.takeItem(self.list_options.currentRow())
+            item = None
+        else:
+            pass
 
     def run_timer(self):
         # GUI is running from the main thread so create a second thread to increate the timer every second
