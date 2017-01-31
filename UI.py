@@ -69,11 +69,13 @@ class Interface(QWidget):
         remove_confirm_box.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
         remove_action_selected = remove_confirm_box.exec()
 
+        #look at the returned qmessagebox button pressed and remove or ignore
         if remove_action_selected == QMessageBox.Ok:
             item = self.list_options.takeItem(self.list_options.currentRow())
             item = None
         else:
             pass
+
 
     def run_timer(self):
         # GUI is running from the main thread so create a second thread to increate the timer every second
