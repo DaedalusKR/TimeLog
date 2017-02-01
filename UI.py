@@ -4,10 +4,14 @@ from PyQt5.QtGui import *
 import threading
 from timeformat import *
 import json
+import os
+import os.path
 
 class Interface(QWidget):
     def __init__(self):
         super().__init__()
+
+        self.file_check_set()
 
         # init class vars
         self.time_elapsed = 0
@@ -15,8 +19,8 @@ class Interface(QWidget):
         self.timer_label = QLabel(self.timer_label_text, self)
         self.timer_count_thread = None
         self.list_options = QListWidget(self)
-        #self.timers = [] #fill from save file
-        self.save_object = {}
+
+        self.save_object = []
         self.timers = self.load_timers()
 
         # end of init class vars
@@ -57,17 +61,26 @@ class Interface(QWidget):
         self.timer_label.setFixedWidth(frame_x_len - 100)
         self.list_options.setGeometry(10,10,135,120)
 
-    def add_timer(self):
-        new_timer = QInputDialog.getText(self, "New Timer", "What are you timing?")
-        timer_title = new_timer[0]
-        new_timer = {"tTitle":timer_title, "tSeconds": int(0)}
-        self.save_object.update(new_timer)
+    def file_check_set(self):
+        if os.path.isfile('./SaveData.txt'):
+            self.timers = self.load_timers()
+        else:
+            self.timers = []
+            self.save_timer_file(self.timers)
 
+
+    def save_timer_file(self, save_object):
         with open("SaveData.txt", "w") as outfile:
-            json.dump(self.save_object, outfile)
+            json.dump(save_object, outfile)
         outfile.close()
         print("File Data Saved")
 
+    def add_timer(self):
+        new_timer = QInputDialog.getText(self, "New Timer", "What are you timing?")
+        timer_title = new_timer[0]
+        new_timer = {"tTitle": timer_title, "tSeconds": int(0)}
+        self.timers.append(new_timer)
+        self.save_timer_file(self.timers)
         self.list_options.addItem(str(timer_title))
 
 
@@ -92,7 +105,11 @@ class Interface(QWidget):
         print("save timers")
 
     def load_timers(self):
-        print("load")
+        with open("SaveData.txt", "r") as infile:
+            loaded_data = json.load(infile)
+            infile.close()
+
+        return loaded_data
 
 
 
