@@ -1,4 +1,3 @@
-
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 import threading
@@ -87,9 +86,6 @@ class Interface(QWidget):
 
         return loaded_data
 
-    def update_timer_file(self):
-        print("save timers")
-
     def add_timer(self):
         new_timer = QInputDialog.getText(self, "New Timer", "What are you timing?")
         timer_title = new_timer[0]
@@ -101,7 +97,6 @@ class Interface(QWidget):
     def remove_timer(self):
         remove_confirm_box = QMessageBox()
         remove_confirm_box.setIcon(QMessageBox.Question)
-
         remove_confirm_box.setWindowTitle("Remove Timer")
         remove_confirm_box.setText("Are you sure you want to delete this timer? This can\'t be undone")
         remove_confirm_box.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
@@ -109,6 +104,16 @@ class Interface(QWidget):
 
         # look at the returned qmessagebox button pressed and remove or ignore
         if remove_action_selected == QMessageBox.Ok:
+            iterator = 0
+            for items in self.timers:
+                if items['tTitle'] == self.list_options.currentItem().text():
+                    print(iterator)
+                    del self.timers[iterator]
+                    self.save_timer_file(self.timers)
+                    #self.update_timers()
+                iterator += 1
+
+
             item = self.list_options.takeItem(self.list_options.currentRow())
             item = None
         else:
