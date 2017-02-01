@@ -52,14 +52,14 @@ class Interface(QWidget):
 
         # position UI elements
         start_button.move(button_x_pos, button_y_pos)
-        start_button.pressed.connect(self.run_timer)
+        start_button.clicked.connect(self.run_timer)
         stop_button.move(start_button.pos().x() + button_x_diff, start_button.pos().y() + button_y_diff)
-        stop_button.pressed.connect(self.stop_timer)
+        stop_button.clicked.connect(self.stop_timer)
         close_button.move(stop_button.pos().x() + button_x_diff, stop_button.pos().y() + button_y_diff)
         add_button.move(2, 130)
-        add_button.pressed.connect(self.add_timer)
+        add_button.clicked.connect(self.add_timer)
         remove_button.move(60, 130)
-        remove_button.pressed.connect(self.remove_timer)
+        remove_button.clicked.connect(self.remove_timer)
         self.resize(frame_x_len, frame_y_len)
         self.timer_label.move(180, 50)
         self.timer_label.setFixedWidth(frame_x_len - 100)
@@ -110,14 +110,11 @@ class Interface(QWidget):
                     print(iterator)
                     del self.timers[iterator]
                     self.save_timer_file(self.timers)
-                    #self.update_timers()
                 iterator += 1
-
 
             item = self.list_options.takeItem(self.list_options.currentRow())
             item = None
         else:
-            #do nothing
             pass
 
     def run_timer(self):
