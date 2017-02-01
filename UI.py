@@ -16,7 +16,7 @@ class Interface(QWidget):
         self.timer_count_thread = None
         self.list_options = QListWidget(self)
         #self.timers = [] #fill from save file
-        self.save_object = []
+        self.save_object = {}
         self.timers = self.load_timers()
 
         # end of init class vars
@@ -60,7 +60,8 @@ class Interface(QWidget):
     def add_timer(self):
         new_timer = QInputDialog.getText(self, "New Timer", "What are you timing?")
         timer_title = new_timer[0]
-        self.save_object.append(timer_title)
+        new_timer = {"tTitle":timer_title, "tSeconds": int(0)}
+        self.save_object.update(new_timer)
 
         with open("SaveData.txt", "w") as outfile:
             json.dump(self.save_object, outfile)
