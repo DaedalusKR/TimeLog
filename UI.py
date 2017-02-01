@@ -57,7 +57,11 @@ class Interface(QWidget):
         self.timer_label.move(180, 50)
         self.timer_label.setFixedWidth(frame_x_len - 100)
         self.list_options.setGeometry(10, 10, 135, 120)
+        self.update_timers()
 
+    def update_timers(self):
+        self.timers = None
+        self.timers = self.load_timers()
         for item in self.timers:
             self.list_options.addItem(item['tTitle'])
             print('added')
@@ -69,7 +73,6 @@ class Interface(QWidget):
         else:
             self.timers = []
             self.save_timer_file(self.timers)
-
 
     def save_timer_file(self, save_object):
         with open("SaveData.txt", "w") as outfile:
