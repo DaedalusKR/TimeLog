@@ -19,10 +19,7 @@ class Interface(QWidget):
         self.timer_label = QLabel(self.timer_label_text, self)
         self.timer_count_thread = None
         self.list_options = QListWidget(self)
-
         self.save_object = []
-        self.timers = self.load_timers()
-
         # end of init class vars
 
         # set up Timer UI and push to screen
@@ -59,11 +56,16 @@ class Interface(QWidget):
         self.resize(frame_x_len, frame_y_len)
         self.timer_label.move(180, 50)
         self.timer_label.setFixedWidth(frame_x_len - 100)
-        self.list_options.setGeometry(10,10,135,120)
+        self.list_options.setGeometry(10, 10, 135, 120)
+
+        for item in self.timers:
+            self.list_options.addItem(item['tTitle'])
+            print('added')
 
     def file_check_set(self):
         if os.path.isfile('./SaveData.txt'):
             self.timers = self.load_timers()
+            print(self.timers)
         else:
             self.timers = []
             self.save_timer_file(self.timers)
