@@ -7,24 +7,32 @@ import json
 import os
 import os.path
 
+
 class Interface(QWidget):
     def __init__(self):
         super().__init__()
 
         self.file_check_set()
+        self.set_vars()
+        self.init_ui()
+        self.show()
 
-        # init class vars
+    def file_check_set(self):
+        if os.path.isfile('./SaveData.txt'):
+            self.timers = self.load_timer_file()
+            print(self.timers)
+        else:
+            self.timers = []
+            self.save_timer_file(self.timers)
+
+    def set_vars(self):
+        # init class vars #
         self.time_elapsed = 0
         self.timer_label_text = "00:00:00"
         self.timer_label = QLabel(self.timer_label_text, self)
         self.timer_count_thread = None
         self.list_options = QListWidget(self)
         self.save_object = []
-        # end of init class vars
-
-        # set up Timer UI and push to screen
-        self.init_ui()
-        self.show()
 
     def init_ui(self):
         # set vars for UI elements
@@ -61,24 +69,26 @@ class Interface(QWidget):
 
     def update_timers(self):
         self.timers = None
-        self.timers = self.load_timers()
+        self.timers = self.load_timer_file()
         for item in self.timers:
             self.list_options.addItem(item['tTitle'])
             print('added')
-
-    def file_check_set(self):
-        if os.path.isfile('./SaveData.txt'):
-            self.timers = self.load_timers()
-            print(self.timers)
-        else:
-            self.timers = []
-            self.save_timer_file(self.timers)
 
     def save_timer_file(self, save_object):
         with open("SaveData.txt", "w") as outfile:
             json.dump(save_object, outfile)
         outfile.close()
         print("File Data Saved")
+
+    def load_timer_file(self):
+        with open("SaveData.txt", "r") as infile:
+            loaded_data = json.load(infile)
+            infile.close()
+
+        return loaded_data
+
+    def update_timer_file(self):
+        print("save timers")
 
     def add_timer(self):
         new_timer = QInputDialog.getText(self, "New Timer", "What are you timing?")
@@ -87,7 +97,6 @@ class Interface(QWidget):
         self.timers.append(new_timer)
         self.save_timer_file(self.timers)
         self.list_options.addItem(str(timer_title))
-
 
     def remove_timer(self):
         remove_confirm_box = QMessageBox()
@@ -105,18 +114,6 @@ class Interface(QWidget):
         else:
             #do nothing
             pass
-
-    def update_timer_file(self):
-        print("save timers")
-
-    def load_timers(self):
-        with open("SaveData.txt", "r") as infile:
-            loaded_data = json.load(infile)
-            infile.close()
-
-        return loaded_data
-
-
 
     def run_timer(self):
         # GUI is running from the main thread so create a second thread to increate the timer every second
