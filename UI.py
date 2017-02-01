@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 import threading
 from timeformat import *
+import json
 
 class Interface(QWidget):
     def __init__(self):
@@ -14,7 +15,9 @@ class Interface(QWidget):
         self.timer_label = QLabel(self.timer_label_text, self)
         self.timer_count_thread = None
         self.list_options = QListWidget(self)
-        self.timers = []
+        #self.timers = [] #fill from save file
+        self.save_object = []
+        self.timers = self.load_timers()
 
         # end of init class vars
 
@@ -57,6 +60,13 @@ class Interface(QWidget):
     def add_timer(self):
         new_timer = QInputDialog.getText(self, "New Timer", "What are you timing?")
         timer_title = new_timer[0]
+        self.save_object.append(timer_title)
+
+        with open("SaveData.txt", "w") as outfile:
+            json.dump(self.save_object, outfile)
+        outfile.close()
+        print("File Data Saved")
+
         self.list_options.addItem(str(timer_title))
 
 
@@ -69,12 +79,20 @@ class Interface(QWidget):
         remove_confirm_box.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
         remove_action_selected = remove_confirm_box.exec()
 
-        #look at the returned qmessagebox button pressed and remove or ignore
+        # look at the returned qmessagebox button pressed and remove or ignore
         if remove_action_selected == QMessageBox.Ok:
             item = self.list_options.takeItem(self.list_options.currentRow())
             item = None
         else:
+            #do nothing
             pass
+
+    def update_timer_file(self):
+        print("save timers")
+
+    def load_timers(self):
+        print("load")
+
 
 
     def run_timer(self):
