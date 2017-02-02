@@ -138,7 +138,6 @@ class Interface(QWidget):
                 if self.list_options.currentItem().text() == item['tTitle']:
                     item['tSeconds'] = self.time_elapsed
                     self.save_timer_file(self.timers)
-
                     self.list_options.clear()
                     self.update_timers()
 
