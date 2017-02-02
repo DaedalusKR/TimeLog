@@ -5,7 +5,7 @@ from timeformat import *
 import json
 import os
 import os.path
-#timer app
+#time
 
 class Interface(QWidget):
     def __init__(self):
