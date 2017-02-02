@@ -11,22 +11,23 @@ class Interface(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.file_check_set()
         self.set_vars()
         self.init_ui()
+        self.file_check_set()
         self.show()
 
     def file_check_set(self):
         if os.path.isfile('./SaveData.txt'):
             self.timers = self.load_timer_file()
-            print(self.timers)
+            self.update_timer_label()
         else:
             self.timers = []
             self.save_timer_file(self.timers)
+            self.time_elapsed = 0
 
     def set_vars(self):
         # init class vars #
-        self.time_elapsed = 0
+        # self.time_elapsed = 0
         self.timer_label_text = "00:00:00"
         self.timer_label = QLabel(self.timer_label_text, self)
         self.timer_count_thread = None
@@ -65,11 +66,23 @@ class Interface(QWidget):
         self.timer_label.setFixedWidth(frame_x_len - 100)
         self.list_options.setGeometry(10, 10, 135, 120)
         self.update_timers()
+        self.list_options.setCurrentRow(0)
+        self.list_options.itemSelectionChanged.connect(lambda: self.update_timer_label())
+
+    def update_timer_label(self):
+            selected_timer = self.list_options.currentItem().text()
+            print(selected_timer)
+            for item in self.timers:
+                if item['tTitle'] == selected_timer:
+                    self.timer_label.setText(str(formatted_time(item['tSeconds'])))
+                    self.time_elapsed = item['tSeconds']
+                    print(self.timer_label.text())
 
     def update_timers(self):
         self.timers = None
         self.timers = self.load_timer_file()
         temp_timers = self.timers
+
         for item in temp_timers:
             self.list_options.addItem(item['tTitle'])
             print('added')
@@ -138,8 +151,7 @@ class Interface(QWidget):
                 if self.list_options.currentItem().text() == item['tTitle']:
                     item['tSeconds'] = self.time_elapsed
                     self.save_timer_file(self.timers)
-                    self.list_options.clear()
-                    self.update_timers()
+                    self.list_options.update()
 
         self.timer_label_text = formatted_time(self.time_elapsed)
         self.timer_label.setText(str(self.timer_label_text))
