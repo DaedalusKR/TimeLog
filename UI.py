@@ -69,7 +69,8 @@ class Interface(QWidget):
     def update_timers(self):
         self.timers = None
         self.timers = self.load_timer_file()
-        for item in self.timers:
+        temp_timers = self.timers
+        for item in temp_timers:
             self.list_options.addItem(item['tTitle'])
             print('added')
 
@@ -130,6 +131,17 @@ class Interface(QWidget):
         # Recurse back into the function until stop_timer() gets called from the UI
         self.time_elapsed = time_elapsed
         self.time_elapsed += 1
+
+        # find timer in the timers dict and update the file each tick
+        if self.list_options.count() > 0:
+            for item in self.timers:
+                if self.list_options.currentItem().text() == item['tTitle']:
+                    item['tSeconds'] = self.time_elapsed
+                    self.save_timer_file(self.timers)
+
+                    self.list_options.clear()
+                    self.update_timers()
+
         self.timer_label_text = formatted_time(self.time_elapsed)
         self.timer_label.setText(str(self.timer_label_text))
         self.run_timer()
