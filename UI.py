@@ -4,26 +4,17 @@ import threading
 from timeformat import *
 import json
 import os
+import sys
 import os.path
-#time
+
 
 class Interface(QWidget):
     def __init__(self):
         super().__init__()
-
         self.set_vars()
         self.init_ui()
         self.file_check_set()
         self.show()
-
-    def file_check_set(self):
-        if os.path.isfile('./SaveData.txt'):
-            self.timers = self.load_timer_file()
-            self.update_timer_label()
-        else:
-            self.timers = []
-            self.save_timer_file(self.timers)
-            self.time_elapsed = 0
 
     def set_vars(self):
         # init class vars #
@@ -57,6 +48,7 @@ class Interface(QWidget):
         stop_button.move(start_button.pos().x() + button_x_diff, start_button.pos().y() + button_y_diff)
         stop_button.clicked.connect(self.stop_timer)
         close_button.move(stop_button.pos().x() + button_x_diff, stop_button.pos().y() + button_y_diff)
+        close_button.clicked.connect(lambda: sys.exit())
         add_button.move(2, 130)
         add_button.clicked.connect(self.add_timer)
         remove_button.move(60, 130)
@@ -68,6 +60,15 @@ class Interface(QWidget):
         self.update_timers()
         self.list_options.setCurrentRow(0)
         self.list_options.itemSelectionChanged.connect(lambda: self.update_timer_label())
+
+    def file_check_set(self):
+        if os.path.isfile('./SaveData.txt'):
+            self.timers = self.load_timer_file()
+            self.update_timer_label()
+        else:
+            self.timers = []
+            self.save_timer_file(self.timers)
+            self.time_elapsed = 0
 
     def update_timer_label(self):
             selected_timer = self.list_options.currentItem().text()
